@@ -1,0 +1,128 @@
+================================================================================
+DATASETS scRNA-seq — FUENTES DE DESCARGA
+================================================================================
+
+--------------------------------------------------------------------------------
+1. PBMC 10k (Peripheral Blood Mononuclear Cells, 10x Genomics)
+--------------------------------------------------------------------------------
+Descripcion:
+  ~10,000 celulas mononucleares de sangre periferica humana (donante sano).
+  Generado con 10x Genomics Chromium v3. Ampliamente usado para benchmarking.
+
+Descarga directa (matriz de cuentas filtrada, formato .tar.gz):
+  wget https://cf.10xgenomics.com/samples/cell-exp/3.0.0/pbmc_10k_v3/pbmc_10k_v3_filtered_feature_bc_matrix.tar.gz
+
+Pagina oficial 10x Genomics:
+  https://www.10xgenomics.com/datasets/10-k-pbm-cs-from-a-healthy-donor-v-3-chemistry-3-standard-3-0-0
+
+Formato del archivo descargado (tras descomprimir):
+  filtered_feature_bc_matrix/
+    barcodes.tsv.gz
+    features.tsv.gz
+    matrix.mtx.gz
+
+Carga en Python (Scanpy):
+  import scanpy as sc
+  adata = sc.read_10x_mtx("filtered_feature_bc_matrix/", var_names="gene_symbols")
+
+Via Bioconductor (R) — paquete TENxPBMCData:
+  BiocManager::install("TENxPBMCData")
+  library(TENxPBMCData)
+  sce <- TENxPBMCData(dataset = "pbmc4k")  # o "pbmc8k", "pbmc68k", etc.
+
+--------------------------------------------------------------------------------
+2. Zeisel Brain (corteza y hipocampo de raton, STRT-seq / UMI)
+--------------------------------------------------------------------------------
+Descripcion:
+  ~3,000 celulas del cortex cerebral y hipocampo de raton (Mus musculus).
+  Protocolo UMI-based (Fluidigm C1). Publicado en Science 2015.
+  Referencia: Zeisel et al. (2015). Science 347(6226):1138-42.
+
+Descarga directa (sitio oficial del laboratorio Linnarsson):
+  http://linnarssonlab.org/cortex/
+  El archivo de datos de soporte (expression_mRNA_17-Aug-2014.txt) se descarga
+  desde el material suplementario del articulo en Science.
+
+URL alternativa de descarga (archivo .txt con matriz de expresion):
+  https://storage.googleapis.com/linnarsson-lab-www-blobs/blobs/cortex/expression_mRNA_17-Aug-2014.txt
+
+Via Bioconductor (R) — paquete scRNAseq:
+  BiocManager::install("scRNAseq")
+  library(scRNAseq)
+  sce <- ZeiselBrainData()
+  # Los datos se descargan automaticamente desde ExperimentHub y se cachean.
+
+Via scRNA-seq datasets index (Hemberg Lab):
+  https://hemberg-lab.github.io/scRNA.seq.datasets/mouse/brain/
+
+--------------------------------------------------------------------------------
+3. Human Pancreas (pancreas humano, multiples estudios)
+--------------------------------------------------------------------------------
+Descripcion:
+  Existen varios datasets de pancreas humano muy usados conjuntamente.
+  Los mas comunes en benchmarking son Baron et al. 2016 y Muraro et al. 2016.
+
+  a) Baron et al. (2016) — inDrop, >12,000 celulas, 4 donantes humanos
+     GEO Accession: GSE84133
+     Descarga: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE84133
+     Via R (Bioconductor):
+       library(scRNAseq)
+       sce <- BaronPancreasData(which = "human")
+
+  b) Muraro et al. (2016) — CEL-seq2, celulas de pancreas humano, 4 donantes
+     GEO Accession: GSE85241
+     Descarga: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE85241
+     Via R (Bioconductor):
+       library(scRNAseq)
+       sce <- MuraroPancreasData()
+
+  c) Segerstolpe et al. (2016) — SMART-seq2, incluye muestras de diabetes T2
+     ArrayExpress: E-MTAB-5061
+     Descarga: https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-5061
+     Via R (Bioconductor):
+       library(scRNAseq)
+       sce <- SegerstolpePancreasData()
+
+Nota: todos los datasets de pancreas estan disponibles via el paquete R "scRNAseq"
+de Bioconductor (se descargan automaticamente desde ExperimentHub).
+
+Indice general de datasets de pancreas (Hemberg Lab):
+  https://hemberg-lab.github.io/scRNA.seq.datasets/human/pancreas/
+
+--------------------------------------------------------------------------------
+4. Tabula Muris (atlas multiorgano de raton, CZ Biohub)
+--------------------------------------------------------------------------------
+Descripcion:
+  ~100,000 celulas de 20 organos y tejidos de Mus musculus.
+  Dos plataformas: droplet (10x) y FACS (Smart-seq2).
+  Publicado en Nature 2018.
+
+Repositorio GitHub oficial:
+  https://github.com/czbiohub-sf/tabula-muris
+
+Descarga de matrices de cuentas (CSV/MTX) desde FigShare:
+  FACS:    https://figshare.com/projects/Tabula_Muris_Transcriptomic_characterization_of_20_organs_and_tissues_from_Mus_musculus_at_single_cell_resolution/27733
+
+Descarga de archivos .h5ad (formato AnnData para Python/Scanpy):
+  Droplet: https://s3.amazonaws.com/czbiohub-tabula-muris/TM_droplet_mat.h5ad
+  FACS:    https://s3.amazonaws.com/czbiohub-tabula-muris/TM_facs_mat.h5ad
+
+Descarga completa via AWS S3 (gratuito, sin necesidad de cuenta AWS):
+  Ver instrucciones en: https://registry.opendata.aws/tabula-muris/
+
+Carga en Python (Scanpy):
+  import scanpy as sc
+  adata = sc.read_h5ad("TM_facs_mat.h5ad")
+
+Via R — paquete TabulaMurisData (Bioconductor):
+  BiocManager::install("TabulaMurisData")
+  library(TabulaMurisData)
+
+--------------------------------------------------------------------------------
+RECURSO ADICIONAL: scRNA-seq Datasets Index (Hemberg Lab, Sanger Institute)
+--------------------------------------------------------------------------------
+  Directorio centralizado con links de descarga para decenas de datasets publicos
+  de scRNA-seq organizados por especie y tejido:
+  https://hemberg-lab.github.io/scRNA.seq.datasets/
+
+================================================================================
